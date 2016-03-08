@@ -1,23 +1,4 @@
-TMK Keyboard Firmware Collection
-================================
-This is a keyboard firmware with some useful features for Atmel AVR controller.
-
-Source code is available here: <http://github.com/tmk/tmk_keyboard>
-
-
-Updates
--------
-#### 2016/02/10
-core: flabbergast's Chibios protocol was merged from <https://github.com/flabbergast/tmk_keyboard/tree/chibios> (@72b1668). See [tmk_core/protocol/chibios/README.md](tmk_core/protocol/chibios/README.md). Chibios protocol supports Cortex-M such as STM32 and Kinetis.
-
-#### 2015/04/22
-Core library was separated to other branch `core`. <https://github.com/tmk/tmk_keyboard/tree/core>
-
-In `Makefile` you need to set `TMK_DIR` to indicate core library location now.
-
-    TMK_DIR = ../../tmk_core
-
-
+# TMK Documenation
 
 Features
 --------
@@ -45,6 +26,18 @@ Projects
 --------
 You can find some keyboard specific projects under `converter` and `keyboard` directory.
 
+## Main projects
+
+### OLKB products
+* [planck](keyboard/planck/)                - [Planck] Ortholinear 40% keyboard
+* [preonic](keyboard/preonic/)              - [Preonic] Ortholinear 50% keyboard
+* [atomic](keyboard/atomic/)                - [Atomic] Ortholinear 60% keyboard
+
+### Ergodox EZ
+* [ergodox_ez](keyboard/ergodox_ez)         - [Ergodox_EZ] Assembled split keyboard
+
+## Other projects
+
 ### converter
 * [ps2_usb](converter/ps2_usb/)             - [PS/2 keyboard to USB][GH_ps2]
 * [adb_usb](converter/adb_usb/)             - [ADB keyboard to USB][GH_adb]
@@ -59,8 +52,8 @@ You can find some keyboard specific projects under `converter` and `keyboard` di
 * [ibm4704_usb](converter/ibm4704_usb)      - [IBM 4704 keyboard Converter][GH_ibm4704]
 
 ### keyboard
-* [hhkb](keyboard/hhkb/)                    - [Happy Hacking Keyboard pro][GH_hhkb] **my main board**
-* [gh60](keyboard/gh60/)                    - [GH60] DIY 60% keyboard [prototype][GH60_proto] **my second board**
+* [hhkb](keyboard/hhkb/)                    - [Happy Hacking Keyboard pro][GH_hhkb] hasu's main board
+* [gh60](keyboard/gh60/)                    - [GH60] DIY 60% keyboard [prototype][GH60_proto] hasu's second board
 * [hbkb](keyboard/hbkb/)                    - [Happy Buckling spring keyboard][GH_hbkb](IBM Model M 60% mod)
 * [hid_liber](keyboard/hid_liber/)          - [HID liberation][HID_liber] controller (by alaricljs)
 * [phantom](keyboard/phantom/)              - [Phantom] keyboard (by Tranquilite)
@@ -104,7 +97,10 @@ You can find some keyboard specific projects under `converter` and `keyboard` di
 [cub-uanic]:    https://github.com/cub-uanic/tmk_keyboard/tree/master/keyboard/ergodox
 [mcdox]:        https://github.com/DavidMcEwan/mcdox
 [mcdox_tmk]:    https://github.com/DavidMcEwan/tmk_keyboard/tree/master/keyboard/mcdox
-
+[Planck]:       http://olkb.co/planck
+[Preonic]:      http://olkb.co/preonic
+[Atomic]:       http://olkb.co/atomic
+[Ergodox_EZ]:   https://www.indiegogo.com/projects/ergodox-ez-an-incredible-mechanical-keyboard
 
 
 License
@@ -117,13 +113,13 @@ Third party libraries like LUFA, PJRC and V-USB have their own license respectiv
 
 Build Firmware and Program Controller
 -------------------------------------
-See [tmk_core/doc/build.md](tmk_core/doc/build.md).
+See [doc/build.md](tmk_core/doc/build.md), or the README in the particular keyboard/* folder.
 
 
 
 Change your keymap
 ------------------
-See [tmk_core/doc/keymap.md](tmk_core/doc/keymap.md).
+See [doc/keymap.md](tmk_core/doc/keymap.md).
 
 
 
@@ -229,10 +225,10 @@ You can use xprintf() to display debug info on `hid_listen`, see `tmk_core/commo
 Files and Directories
 -------------------
 ### Top
+* tmk_core/     - core library
 * keyboard/     - keyboard projects
 * converter/    - protocol converter projects
-* tmk_core/     - core library
-* tmk_core/doc/ - documents
+* doc/          - documents
 
 
 
@@ -244,4 +240,4 @@ Coding Style
 
 Other Keyboard Firmware Projects
 ------------------
-You can learn a lot about keyboard firmware from these. See [Other Projects](https://github.com/tmk/tmk_keyboard/wiki/Other-Protjects) other than TMK.
+You can learn a lot about keyboard firmware from these. See [doc/other_projects.md](tmk_core/doc/other_projects.md).

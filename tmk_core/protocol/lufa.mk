@@ -17,6 +17,19 @@ LUFA_SRC = $(LUFA_DIR)/lufa.c \
 	   $(LUFA_DIR)/descriptor.c \
 	   $(LUFA_SRC_USB)
 
+ifdef MIDI_ENABLE
+	LUFA_SRC += $(LUFA_DIR)/midi/midi.c \
+	   $(LUFA_DIR)/midi/midi_device.c \
+	   $(LUFA_DIR)/midi/bytequeue/bytequeue.c \
+	   $(LUFA_DIR)/midi/bytequeue/interrupt_setting.c \
+	   $(LUFA_SRC_USBCLASS)
+endif
+
+ifdef BLUETOOTH_ENABLE
+	LUFA_SRC += $(LUFA_DIR)/bluetooth.c \
+	$(TMK_DIR)/protocol/serial_uart.c
+endif
+
 SRC += $(LUFA_SRC)
 
 # Search Path
