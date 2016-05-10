@@ -80,6 +80,10 @@ ifeq ($(strip $(BLUETOOTH_ENABLE)), yes)
     OPT_DEFS += -DBLUETOOTH_ENABLE
 endif
 
+ifeq ($(strip $(BLUEFRIEND_ENABLE)), yes)
+    OPT_DEFS += -DBLUEFRIEND_ENABLE
+endif
+
 ifeq ($(strip $(KEYMAP_SECTION_ENABLE)), yes)
     OPT_DEFS += -DKEYMAP_SECTION_ENABLE
 

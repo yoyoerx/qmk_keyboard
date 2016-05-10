@@ -58,6 +58,7 @@
 
 #ifdef BLUETOOTH_ENABLE
     #include "bluetooth.h"
+    #include "../serial.h"
 #endif
 
 uint8_t keyboard_idle = 0;
@@ -442,14 +443,49 @@ static uint8_t keyboard_leds(void)
     return keyboard_led_stats;
 }
 
+#ifdef BLUEFRIEND_ENABLE
+    const uint8_t bluefriend_at_prepend[19] = {'A','T','+','B','L','E','K','E','Y','B','O','A','R','D','C','O','D','E','='};
+    const uint8_t HIGHBITMASK = 0b11110000;
+    const uint8_t LOWBITMASK = 0b00001111;
+#endif
+
 static void send_keyboard(report_keyboard_t *report)
 {
 
+
 #ifdef BLUETOOTH_ENABLE
+#ifndef BLUEFRIEND_ENABLE
     bluefruit_serial_send(0xFD);
     for (uint8_t i = 0; i < KEYBOARD_EPSIZE; i++) {
         bluefruit_serial_send(report->raw[i]);
     }
+#endif
+#endif
+
+#ifdef BLUEFRIEND_ENABLE
+    uint8_t highbyte = 0;
+    uint8_t lowbyte = 0;
+    for(uint8_t i = 0; i<19;i++){
+        bluefruit_serial_send(bluefriend_at_prepend[i]);
+    }
+    for (uint8_t i = 0; i < KEYBOARD_EPSIZE; i++) {
+        highbyte = (HIGHBITMASK & report->raw[i])>>4;
+        if(highbyte <=9) {
+            highbyte += 0x30; //0x0 turns into 0x30 which is "0"
+        } else {
+            highbyte += 0x37; //0xA turns into 0x41 which is ascii "A"
+        }
+        lowbyte = LOWBITMASK & report->raw[i];
+        if(lowbyte <=9) {
+            lowbyte += 0x30; //0x0 turns into 0x30 which is "0"
+        } else {
+            lowbyte += 0x37; //0xA turns into 0x41 which is ascii "A"
+        }
+        bluefruit_serial_send(highbyte);
+        bluefruit_serial_send(lowbyte);
+        if (i < (KEYBOARD_EPSIZE - 1)) bluefruit_serial_send('-');
+    }
+    bluefruit_serial_send('\n');
 #endif
 
     uint8_t timeout = 255;
