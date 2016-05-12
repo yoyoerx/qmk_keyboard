@@ -1,0 +1,1 @@
+BLUEFRIEND_ENABLE = yes

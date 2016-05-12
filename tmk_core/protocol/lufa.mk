@@ -30,6 +30,11 @@ ifeq ($(strip $(BLUETOOTH_ENABLE)), yes)
 	$(TMK_DIR)/protocol/serial_uart.c
 endif
 
+ifeq ($(strip $(BLUEFRIEND_ENABLE)), yes)
+	LUFA_SRC += $(LUFA_DIR)/bluefriend.c \
+	$(TMK_DIR)/protocol/serial_uart.c
+endif
+
 SRC += $(LUFA_SRC)
 
 # Search Path

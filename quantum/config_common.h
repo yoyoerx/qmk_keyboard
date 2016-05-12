@@ -45,7 +45,7 @@
 #define COL2ROW 0x0
 #define ROW2COL 0x1
 
-#ifdef BLUETOOTH_ENABLE
+#if defined(BLUETOOTH_ENABLE) || defined(BLUEFRIEND_ENABLE)
 #ifdef __AVR_ATmega32U4__
     #define SERIAL_UART_BAUD       9600
     #define SERIAL_UART_DATA       UDR1
