@@ -4,9 +4,11 @@
 #include "planck.h"
 #include "action_layer.h"
 #include "eeconfig.h"
-#include "bluefriend.h"
-#include "../serial.h"
+#ifdef BLUEFRIEND_ENABLE
+  #include "bluefriend.h"
+#endif
 
+#include "../serial.h"
 
 
 extern keymap_config_t keymap_config;
@@ -197,7 +199,7 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
             update_tri_layer(_LOWER, _RAISE, _ADJUST);
           }
         break;
-
+#ifdef BLUEFRIEND_ENABLE
         case _BLEFRIEND:
           if (record->event.pressed) {
             layer_on(_BLEFRIEND);
@@ -241,23 +243,33 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
             bluefriend_factoryreset();
           }
         break;
+#endif
 
       }
     return MACRO_NONE;
 }
 
 void matrix_init_user(void) {
-  serial_send('1');
-  serial_send('\n');
-  serial_send('2');
-  serial_send('\n');
-  serial_send('3');
-  serial_send('\n');
-  serial_send('4');
-  serial_send('\n');
+  const uint8_t msg[] = "1...\n2...\n3...\nUART Init Successful.\n";
+  const uint8_t msg_length = 37;
+  for(uint8_t i = 0; i<msg_length;i++){ 
+      serial_send(msg[i]);
+  }
+#ifdef BLUEFRIEND_ENABLE
   bluefriend_name_set();
   bluefriend_enablehidmode();
   bluefriend_set_cmd_mode();
+#endif
 }
 
+void matrix_scan_user(void){
+  //UART echo
+  uint8_t uart_in=0;
+  uart_in = serial_recv();
+  while (uart_in!=0) {
+    serial_send(uart_in);
+    serial_send('\n');
+    uart_in = serial_recv();
+  }
 
+}
