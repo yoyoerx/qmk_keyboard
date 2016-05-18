@@ -24,9 +24,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "bluefriend.h"
 
 #define BLUEFRIEND_KRO_MAX 5
-#define BLUEFRIEND_RETRY_MAX 3
+#define BLUEFRIEND_RETRY_MAX 1
 #define PREPEND_LENGTH 19
-#define BLUEFRIEND_WAIT 10
+#define BLUEFRIEND_WAIT 15
 #define CMD_LEN_MAX 40
 
 #define HIGHBITMASK 0b11110000
@@ -112,14 +112,10 @@ void bluefriend_set_cmd_mode(void){
 		uart_in = serial_recv();
 		if (uart_in == 'O') { // O as in OK
 			bluefriend_sucess = 1;
-			serial_send('*');
-			serial_send('\n');
 			bluefriend_clear_buffer();
 			break;
 		} else { // E as in ERROR or anything else
 			bluefriend_sucess = 0;
-			serial_send('-');
-			serial_send('\n');
 			bluefriend_mode_switch(); //make sure we are in cmd mode
 			_delay_ms(BLUEFRIEND_WAIT);
 		}
@@ -149,19 +145,22 @@ void bluefriend_send_cmd(const uint8_t* cmd){
 		uart_in = serial_recv();
 		if (uart_in == 'O') { // O as in OK
 			bluefriend_sucess = 1;
-			serial_send('*');
-			serial_send('\n');
 			bluefriend_clear_buffer();
 			break;
 		} else { // E as in ERROR or anything else
 			bluefriend_sucess = 0;
-			serial_send('-');
-			serial_send('\n');
 		}
 
 		bluefriend_clear_buffer(); //read out the rest of the UART ring buffer
 		retry++;
 	} while((!bluefriend_sucess) && (retry < BLUEFRIEND_RETRY_MAX));
+}
+
+void bluefriend_send_txt(const char* txt){
+	uint8_t txt_length = strnlen(txt, CMD_LEN_MAX);
+	for(uint8_t i = 0; i<txt_length;i++){ 
+		serial_send(txt[i]);
+	}
 }
 
 void bluefriend_keyboard_send(report_keyboard_t *report)
@@ -210,14 +209,10 @@ void bluefriend_keyboard_send(report_keyboard_t *report)
 		uart_in = serial_recv();
 		if (uart_in == 'O') { // O as in OK
 			bluefriend_sucess = 1;
-			serial_send('*');
-			serial_send('\n');
 			bluefriend_clear_buffer();
 			break;
 		} else { // E as in ERROR or anything else
 			bluefriend_sucess = 0;
-			serial_send('-');
-			serial_send('\n');
 		}
 
 		bluefriend_clear_buffer(); //read out the rest of the UART ring buffer

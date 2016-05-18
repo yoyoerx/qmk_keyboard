@@ -55,7 +55,7 @@
     #define SERIAL_UART_INIT()     do { \
         UBRR1L = (uint8_t) SERIAL_UART_UBRR;       /* baud rate */ \
         UBRR1H = (uint8_t) (SERIAL_UART_UBRR>>8);  /* baud rate */ \
-        UCSR1B = (1<<TXEN1);                /* TX: enable */ \
+        UCSR1B = (1<<TXEN1) | (1<<RXEN1) | (1 << RXCIE1 );  /* TX: enable, RX: enable, Enable the USART Recieve Complete interrupt ( USART_RXC ) */ \
         UCSR1C = (0<<UPM11) | (0<<UPM10) | /* parity: none(00), even(01), odd(11) */ \
                  (0<<UCSZ12) | (1<<UCSZ11) | (1<<UCSZ10); /* data-8bit(011) */ \
 		sei(); \

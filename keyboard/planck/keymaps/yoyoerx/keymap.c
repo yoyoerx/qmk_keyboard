@@ -6,7 +6,10 @@
 #include "eeconfig.h"
 #ifdef BLUEFRIEND_ENABLE
   #include "bluefriend.h"
+  #define BF_DEBUG
+  #define BF_DEBUG_ECHO
 #endif
+
 
 #include "../serial.h"
 
@@ -22,7 +25,7 @@ extern keymap_config_t keymap_config;
 #define _LOWER 3
 #define _RAISE 4
 #define _ADJUST 16
-#define _BLEFRIEND 33
+
 
 // Macro name shortcuts
 #define QWERTY M(_QWERTY)
@@ -30,7 +33,7 @@ extern keymap_config_t keymap_config;
 #define LOWER M(_LOWER)
 #define RAISE M(_RAISE)
 
-
+#define _BLEFRIEND 33
 #define BF_FR 34
 #define BF_HIDEN 35
 #define BF_HIDDI 36
@@ -138,7 +141,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* BLE Friend Command Pallet
  * ,-----------------------------------------------------------------------------------.
- * |      | Reset|Factor|HID EN|HIDDIS| NAME | MODE |      |      |      |      |  Del |
+ * |      |BReset|Factor|HID EN|HIDDIS| NAME | MODE |      |      |      |      |  Del |
  * |------+------+------+------+------+-------------+------+------+------+------+------|
  * |      |      |      |      |      |      |      |      |      |      |      |      |
  * |------+------+------+------+------+------|------+------+------+------+------+------|
@@ -203,44 +206,68 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
         case _BLEFRIEND:
           if (record->event.pressed) {
             layer_on(_BLEFRIEND);
+            #ifdef BF_DEBUG
+            bluefriend_send_txt("BLE Layer on!\n");
+            #endif
           } else {
             layer_off(_BLEFRIEND);
+            #ifdef BF_DEBUG
+            bluefriend_send_txt("BLE Layer off!\n");
+            #endif
           }
         break;
 
         case BF_FR:
           if (record->event.pressed) {
+            #ifdef BF_DEBUG
+            bluefriend_send_txt("Factory Reset!\n");
+            #endif
             bluefriend_factoryreset();
           }
         break;
 
         case BF_HIDDI:
           if (record->event.pressed) {
+            #ifdef BF_DEBUG
+            bluefriend_send_txt("Disable HID MODE!\n");
+            #endif
             bluefriend_disablehidmode();
           }
         break;
 
         case BF_HIDEN:
           if (record->event.pressed) {
+            #ifdef BF_DEBUG
+            bluefriend_send_txt("Enable HID MODE!\n");
+            #endif
             bluefriend_enablehidmode();
           }
         break;
 
         case BF_NAME:
           if (record->event.pressed) {
+            #ifdef BF_DEBUG
+            bluefriend_send_txt("Setting Name!\n");
+            #endif
             bluefriend_name_set();
           }
         break;
 
         case BF_MODE:
           if (record->event.pressed) {
+            #ifdef BF_DEBUG
+            bluefriend_send_txt("Set Command MODE!\n");
+            #endif
             bluefriend_set_cmd_mode();
           }
         break;
 
         case BF_RESET:
           if (record->event.pressed) {
-            bluefriend_factoryreset();
+            #ifdef BF_DEBUG
+            bluefriend_send_txt("Reset Friend!\n");
+            #endif
+            bluefriend_reset();
           }
         break;
 #endif
@@ -250,26 +277,29 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
 }
 
 void matrix_init_user(void) {
-  const uint8_t msg[] = "1...\n2...\n3...\nUART Init Successful.\n";
-  const uint8_t msg_length = 37;
-  for(uint8_t i = 0; i<msg_length;i++){ 
-      serial_send(msg[i]);
-  }
-#ifdef BLUEFRIEND_ENABLE
+  #ifdef BF_DEBUG
+  bluefriend_send_txt("1...\n2...\n3...\nUART Init Successful.\n");
+  #endif
+
+  #ifdef BLUEFRIEND_ENABLE
+  bluefriend_factoryreset();
   bluefriend_name_set();
-  bluefriend_enablehidmode();
-  bluefriend_set_cmd_mode();
-#endif
+  //bluefriend_enablehidmode();
+  //bluefriend_set_cmd_mode();
+  #endif
 }
 
 void matrix_scan_user(void){
-  //UART echo
-  uint8_t uart_in=0;
-  uart_in = serial_recv();
-  while (uart_in!=0) {
-    serial_send(uart_in);
-    serial_send('\n');
+  #ifdef BF_DEBUG_ECHO
+    //UART echo
+    uint8_t uart_in=0;
+    uint8_t send = 0;
     uart_in = serial_recv();
-  }
-
+    while (uart_in!=0) {
+      serial_send(uart_in);
+      send = 1;
+      uart_in = serial_recv();
+    }
+    if(send==1) serial_send('\n');
+  #endif
 }

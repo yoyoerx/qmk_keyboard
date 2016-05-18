@@ -28,6 +28,7 @@ void bluefriend_reset(void);
 
 void bluefriend_set_cmd_mode(void);
 void bluefriend_send_cmd(const uint8_t* cmd);
+void bluefriend_send_txt(const char* txt);
 
 void bluefriend_keyboard_send(report_keyboard_t *report);
 
